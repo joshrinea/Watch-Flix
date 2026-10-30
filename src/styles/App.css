@@ -37,6 +37,7 @@ body {
   width: 100%;
   padding-inline: calc(0.25rem * 12);
   overflow: visible;
+  touch-action: pan-y;
 }
 
 /* The moving strip */
@@ -84,6 +85,7 @@ body {
   left: 50%;
   width: calc(100% - var(--slider-item-gap));
   height: 100%;
+  box-sizing: border-box;
   overflow: hidden;
   transform: translate(-50%, -50%);
   border-radius: 4px;
@@ -96,13 +98,10 @@ body {
     box-shadow 350ms ease;
 }
 
-/* Expand into a landscape frame */
+/* Scale the frame consistently across viewport sizes */
 .slider-item:hover .slider-frame,
 .slider-item:focus-within .slider-frame {
-  /* width: clamp(280px, 32vw, 540px);
-  height: clamp(190px, 22vw, 360px); */
-  width: 280px;
-  height: 360px;
+  transform: translate(-50%, -50%) scale(1.1);
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.7);
   border: 1px solid white;
 }
@@ -135,14 +134,14 @@ body {
 .slider-item--first-visible:hover .slider-frame,
 .slider-item--first-visible:focus-within .slider-frame {
   left: var(--slider-item-half-gap);
-  transform: translateY(-50%);
+  transform: translateY(-50%) scale(1.1);
 }
 
 /* Last visible item expands inward from the right */
 .slider-item--last-visible:hover .slider-frame,
 .slider-item--last-visible:focus-within .slider-frame {
   left: calc(100% - var(--slider-item-half-gap));
-  transform: translate(-100%, -50%);
+  transform: translate(-100%, -50%) scale(1.1);
 }
 
 /* Keep a single visible item centered */
@@ -150,7 +149,7 @@ body {
 .slider-item--first-visible.slider-item--last-visible:focus-within
   .slider-frame {
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) scale(1.1);
 }
 
 /* Movie information and gradient overlay */
@@ -342,16 +341,10 @@ body {
 }
 
 @media (max-width: 600px) {
-  .slider-item:hover .slider-frame,
-  .slider-item:focus-within .slider-frame {
-    width: min(280px, 82vw);
-    height: min(190px, 55vw);
+  .slider-content-viewport {
+    padding-inline: calc(0.25rem * 4);
   }
 
-  .slider-item--overview-expanded:hover .slider-frame,
-  .slider-item--overview-expanded:focus-within .slider-frame {
-    height: min(360px, 70vh);
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
