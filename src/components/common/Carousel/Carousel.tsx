@@ -57,6 +57,8 @@ export default function Carousel() {
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
     ) {
       return;
+    } else {
+      setError(true);
     }
 
     const id = window.setTimeout(

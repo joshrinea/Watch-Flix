@@ -27,6 +27,7 @@ export class Slider extends Component<SliderProps, SliderState> {
   };
 
   private moveTimeout: ReturnType<typeof setTimeout> | undefined;
+  private touchStartX: number | null = null;
 
   componentDidMount(): void {
     window.addEventListener("resize", this.handleWindowResize);
@@ -146,6 +147,27 @@ export class Slider extends Component<SliderProps, SliderState> {
     this.animateTo(newIndex);
   };
 
+  handleTouchStart = (event: React.TouchEvent<HTMLDivElement>): void => {
+    this.touchStartX = event.touches[0]?.clientX ?? null;
+  };
+
+  handleTouchEnd = (event: React.TouchEvent<HTMLDivElement>): void => {
+    if (this.touchStartX === null) return;
+
+    const touchEndX = event.changedTouches[0]?.clientX;
+    const swipeDistance =
+      touchEndX === undefined ? 0 : touchEndX - this.touchStartX;
+    this.touchStartX = null;
+
+    if (Math.abs(swipeDistance) < 40) return;
+
+    if (swipeDistance < 0) {
+      this.handleNext();
+    } else {
+      this.handlePrev();
+    }
+  };
+
   // triggers the animation, then updates lowestVisibleIndex and resets in the callback
   private animateTo(newIndex: number): void {
     const boundedIndex = Math.min(
@@ -205,7 +227,14 @@ export class Slider extends Component<SliderProps, SliderState> {
 
     return (
       <div className="slider">
-        <div className="slider-content-viewport">
+        <div
+          className="slider-content-viewport"
+          onTouchStart={this.handleTouchStart}
+          onTouchEnd={this.handleTouchEnd}
+          onTouchCancel={() => {
+            this.touchStartX = null;
+          }}
+        >
           {boundedIndex > 0 && (
             <SliderControl arrowDirection="left" onClick={this.handlePrev} />
           )}

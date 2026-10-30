@@ -54,6 +54,7 @@ const Sidebar: React.FC<NavigationProps> = ({ isMenuOpen, toggleMenu }) => {
             <li
               key={index}
               className="text-white w-fit cursor-pointer text-base mb-2"
+              onClick={toggleMenu}
             >
               <span className="capitalize">{genre}</span>
             </li>
