@@ -35,7 +35,7 @@ body {
   position: relative;
   box-sizing: border-box;
   width: 100%;
-  padding-inline: calc(0.25rem * 12);
+  padding-inline: 1rem;
   overflow: visible;
   touch-action: pan-y;
 }
@@ -101,7 +101,7 @@ body {
 /* Scale the frame consistently across viewport sizes */
 .slider-item:hover .slider-frame,
 .slider-item:focus-within .slider-frame {
-  transform: translate(-50%, -50%) scale(1.1);
+  transform: translate(-50%, -50%) scale(1.2);
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.7);
   border: 1px solid white;
 }
@@ -134,14 +134,14 @@ body {
 .slider-item--first-visible:hover .slider-frame,
 .slider-item--first-visible:focus-within .slider-frame {
   left: var(--slider-item-half-gap);
-  transform: translateY(-50%) scale(1.1);
+  transform: translateY(-50%) scale(1.2);
 }
 
 /* Last visible item expands inward from the right */
 .slider-item--last-visible:hover .slider-frame,
 .slider-item--last-visible:focus-within .slider-frame {
   left: calc(100% - var(--slider-item-half-gap));
-  transform: translate(-100%, -50%) scale(1.1);
+  transform: translate(-100%, -50%) scale(1.2);
 }
 
 /* Keep a single visible item centered */
@@ -149,7 +149,7 @@ body {
 .slider-item--first-visible.slider-item--last-visible:focus-within
   .slider-frame {
   left: 50%;
-  transform: translate(-50%, -50%) scale(1.1);
+  transform: translate(-50%, -50%) scale(1.2);
 }
 
 /* Movie information and gradient overlay */
@@ -340,11 +340,16 @@ body {
   transform: scale(1.25);
 }
 
-@media (max-width: 600px) {
+@media (min-width: 601px) and (max-width: 1023px) {
   .slider-content-viewport {
-    padding-inline: calc(0.25rem * 4);
+    padding-inline: 2.25rem;
   }
+}
 
+@media (min-width: 1024px) {
+  .slider-content-viewport {
+    padding-inline: 3rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
