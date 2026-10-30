@@ -38,7 +38,7 @@ export const Header = () => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 w-full mx-auto z-50 flex items-center px-12 transition-colors duration-500 h-16 ${isScrolled ? "bg-black/80" : "bg-transparent"}`}
+      className={`fixed top-0 left-0 w-full mx-auto z-50 flex items-center px-4 sm:px-9 lg:px-12 transition-colors duration-500 h-16 ${isScrolled ? "bg-black/80" : "bg-transparent"}`}
     >
       <div
         className={`w-full flex justify-between items-center transition-colors duration-300`}

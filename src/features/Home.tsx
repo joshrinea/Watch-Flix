@@ -38,11 +38,11 @@ export class Home extends Component<{}, HomeState> {
       <div className="App">
         <Carousel />
         <div className="mb-4">
-          <h1 className="text-lg ps-12 mb-2">Continue watching</h1>
+          <h1 className="px-4 text-lg mb-2 sm:px-9 lg:px-12">Continue watching</h1>
           <Slider movies={movies} />
         </div>
         <div className="mb-4">
-          <h1 className="text-lg ps-12 mb-2">Newly added</h1>
+          <h1 className="px-4 text-lg mb-2 sm:px-9 lg:px-12">Newly added</h1>
           <Slider movies={movies} />
         </div>
       </div>
