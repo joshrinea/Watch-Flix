@@ -6,21 +6,6 @@ interface NavigationProps {
 }
 
 const Sidebar: React.FC<NavigationProps> = ({ isMenuOpen, toggleMenu }) => {
-  const menus = [
-    {
-      title: "home",
-      route: "/",
-    },
-    {
-      title: "movies",
-      route: "/movies",
-    },
-    {
-      title: "TV",
-      route: "/tv",
-    },
-  ];
-
   const genres = [
     "comedy",
     "drama",
