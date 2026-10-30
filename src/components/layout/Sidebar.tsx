@@ -6,21 +6,6 @@ interface NavigationProps {
 }
 
 const Sidebar: React.FC<NavigationProps> = ({ isMenuOpen, toggleMenu }) => {
-  const menus = [
-    {
-      title: "home",
-      route: "/",
-    },
-    {
-      title: "movies",
-      route: "/movies",
-    },
-    {
-      title: "TV",
-      route: "/tv",
-    },
-  ];
-
   const genres = [
     "comedy",
     "drama",
@@ -42,13 +27,13 @@ const Sidebar: React.FC<NavigationProps> = ({ isMenuOpen, toggleMenu }) => {
       } transition-transform duration-300 ease-in-out filter`}
     >
       <div className="mt-17.5">
-        <div className="block md:hidden">
+        {/* <div className="block md:hidden">
           <div className="flex flex-col">
             {menus.map((menu, index) => (
               <span key={index}>{menu.title}</span>
             ))}
           </div>
-        </div>
+        </div> */}
         <ul className="mt-17.5">
           {genres.map((genre, index) => (
             <li
