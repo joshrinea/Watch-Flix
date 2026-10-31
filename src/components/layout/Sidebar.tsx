@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 interface NavigationProps {
   isMenuOpen: boolean;
@@ -6,6 +6,18 @@ interface NavigationProps {
 }
 
 const Sidebar: React.FC<NavigationProps> = ({ isMenuOpen, toggleMenu }) => {
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+
+    if (isMenuOpen) {
+      document.body.style.overflow = "hidden";
+    }
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isMenuOpen]);
+
   const genres = [
     "comedy",
     "drama",

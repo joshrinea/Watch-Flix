@@ -6,6 +6,10 @@
   --tertiary-color: #ffffff;
 }
 
+html {
+  scrollbar-gutter: stable;
+}
+
 body {
   /* background-color: var(--primary-color); */
 }

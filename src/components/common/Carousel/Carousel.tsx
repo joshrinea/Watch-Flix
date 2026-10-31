@@ -1,64 +1,34 @@
 import { useEffect, useState } from "react";
-import { trendings } from "../../../data/trendings";
 import { CiCircleInfo, CiStar } from "react-icons/ci";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
-
-export interface MovieResponse {
-  page: number;
-  results: Movie[];
-  total_pages: number;
-  total_results: number;
-}
-
-export interface Movie {
-  adult: boolean;
-  backdrop_path: string | null;
-  id: number;
-
-  // Movies use title; TV shows use name
-  title?: string;
-  name?: string;
-
-  original_title?: string;
-  original_name?: string;
-
-  overview: string;
-  poster_path: string | null;
-
-  media_type: "movie" | "tv";
-  original_language: string;
-  genre_ids: number[];
-  popularity: number;
-
-  // Movies use release_date; TV shows use first_air_date
-  release_date?: string;
-  first_air_date?: string;
-
-  vote_average: number;
-  vote_count: number;
-
-  // Optional fields found in your data
-  video?: boolean;
-  origin_country?: string[];
-  softcore?: boolean;
-}
+import type { TrendingMedia } from "../../../types/trending";
+import { fetchTrendingMedia } from "../../../services/trendingService";
+import { useNavigate } from "react-router";
 
 export default function Carousel() {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const [error, setError] = useState(false);
+  const [items, setItems] = useState<TrendingMedia[]>([]);
+  const navigate = useNavigate();
 
-  const items = trendings.results.slice(0, 6);
+  useEffect(() => {
+    fetchTrendingMedia()
+      .then((data) => setItems(data.results.slice(0, 6)))
+      .catch((fetchError: unknown) => {
+        console.error("Error fetching trending titles:", fetchError);
+        setError(true);
+      });
+  }, []);
 
   useEffect(() => {
     if (
       paused ||
       index >= items.length - 1 ||
+      items.length === 0 ||
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
     ) {
       return;
-    } else {
-      setError(true);
     }
 
     const id = window.setTimeout(
@@ -85,6 +55,11 @@ export default function Carousel() {
         <div
           className={`absolute inset-0 transition-opacity duration-700 motion-reduce:transition-none ${i === index ? "opacity-100" : "pointer-events-none opacity-0"}`}
           key={i + trending.id}
+          onClick={() =>
+            navigate(
+              `/details/${trending.media_type}/${trending.id}`,
+            )
+          }
         >
           <picture>
             {trending.poster_path && (
@@ -109,8 +84,11 @@ export default function Carousel() {
             //   <FiChevronLeft />
             // </button>
             <button
-              onClick={() => setIndex((i) => Math.max(0, i - 1))}
               aria-label="Previous featured title"
+              onClick={(event) => {
+                event.stopPropagation();
+                setIndex((i) => Math.max(0, i - 1));
+              }}
               className="absolute left-0! top-0 z-20 h-full p-3 sm:left-4
     cursor-pointer
     before:absolute before:inset-0 before:-z-10
@@ -130,8 +108,11 @@ export default function Carousel() {
             //   <FiChevronRight />
             // </button>
             <button
-              onClick={() => setIndex((i) => Math.min(items.length - 1, i + 1))}
               aria-label="Next featured title"
+              onClick={(event) => {
+                event.stopPropagation();
+                setIndex((i) => Math.min(items.length - 1, i + 1));
+              }}
               className="absolute right-0! top-0 z-20 h-full p-3 sm:right-4
     cursor-pointer
     before:absolute before:inset-0 before:-z-10
@@ -150,7 +131,7 @@ export default function Carousel() {
             Featured on WatchFlix
           </p>
           <h1 className="text-4xl font-black leading-[1.05] tracking-tight drop-shadow-lg sm:text-6xl lg:text-7xl">
-            {m.title || "Untitled"}
+            {"title" in m ? m.title : m.name}
           </h1>
           <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-zinc-200">
             <span className="flex items-center gap-1">
@@ -158,7 +139,10 @@ export default function Carousel() {
               {m.vote_average.toFixed(1)}
             </span>
             <span>
-              {(m.release_date || m.first_air_date || "").slice(0, 4)}
+              {("release_date" in m ? m.release_date : m.first_air_date).slice(
+                0,
+                4,
+              )}
             </span>
             <span className="rounded border border-white/50 px-2 py-0.5 text-xs">
               {m.media_type === "tv" ? "SERIES" : "MOVIE"}
