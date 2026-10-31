@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import type { Movie } from "../../../types/movie";
+import type { SliderMedia } from "../../../types/media";
 // import { SliderControl } from "./slider-control/sliderControl";
 import SliderControl from "./slider-control/sliderControl";
 import SliderItem from "./slider-item/sliderItem";
@@ -8,7 +8,11 @@ import SliderItem from "./slider-item/sliderItem";
 const ANIMATION_MS = 750;
 
 interface SliderProps {
-  movies: Movie[];
+  movies: SliderMedia[];
+  imageType?: "poster" | "backdrop";
+  size?: "default" | "large" | "extra-large";
+  badge?: string;
+  showTitle?: boolean;
 }
 
 interface SliderState {
@@ -28,6 +32,24 @@ export class Slider extends Component<SliderProps, SliderState> {
 
   private moveTimeout: ReturnType<typeof setTimeout> | undefined;
   private touchStartX: number | null = null;
+
+  private getItemsInRow(size: "default" | "large" | "extra-large"): number {
+    if (size === "extra-large") {
+      if (window.innerWidth <= 768) return 1;
+      return window.innerWidth <= 1024 ? 2 : 3;
+    }
+
+    if (size === "large") {
+      if (window.innerWidth <= 425) return 1;
+      if (window.innerWidth <= 768) return 2;
+      return window.innerWidth <= 1024 ? 3 : 4;
+    }
+
+    if (window.innerWidth <= 425) return 2;
+    if (window.innerWidth <= 768) return 3;
+    if (window.innerWidth <= 1024) return 5;
+    return 8;
+  }
 
   componentDidMount(): void {
     window.addEventListener("resize", this.handleWindowResize);
@@ -66,24 +88,7 @@ export class Slider extends Component<SliderProps, SliderState> {
 
   // alter number of items in row on window resize
   handleWindowResize = (): void => {
-    let itemsInRow: number;
-    // if (window.innerWidth > 1440) {
-    //   itemsInRow = 6;
-    // } else if (window.innerWidth >= 1000) {
-    //   itemsInRow = 5;
-    // } else {
-    //   itemsInRow = 4;
-    // }
-
-    if (window.innerWidth <= 425) {
-      itemsInRow = 2;
-    } else if (window.innerWidth <= 768) {
-      itemsInRow = 3;
-    } else if (window.innerWidth <= 1024) {
-      itemsInRow = 5;
-    } else {
-      itemsInRow = 8;
-    }
+    const itemsInRow = this.getItemsInRow(this.props.size ?? "default");
 
     if (itemsInRow === this.state.itemsInRow) return;
 
@@ -109,6 +114,9 @@ export class Slider extends Component<SliderProps, SliderState> {
   // };
   renderSliderContent = (): React.ReactElement[] => {
     const { movies } = this.props;
+    const { imageType = "poster" } = this.props;
+    const { badge } = this.props;
+    const { showTitle } = this.props;
     const { lowestVisibleIndex, itemsInRow } = this.state;
     const totalItemSlots = Math.max(movies.length, itemsInRow);
     const lastVisibleIndex = Math.min(
@@ -123,6 +131,9 @@ export class Slider extends Component<SliderProps, SliderState> {
         width={100 / totalItemSlots}
         isVisibleFirst={index === lowestVisibleIndex}
         isVisibleLast={index === lastVisibleIndex}
+        imageType={imageType}
+        badge={badge}
+        showTitle={showTitle}
       />
     ));
   };
@@ -226,7 +237,9 @@ export class Slider extends Component<SliderProps, SliderState> {
     };
 
     return (
-      <div className="slider">
+      <div
+        className={`slider slider--${this.props.imageType ?? "poster"} slider--${this.props.size ?? "default"}`}
+      >
         <div
           className="slider-content-viewport"
           onTouchStart={this.handleTouchStart}

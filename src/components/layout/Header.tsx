@@ -2,6 +2,7 @@ import { useState } from "react";
 import { FaRegCircleUser, FaRegBookmark } from "react-icons/fa6";
 import { IoSearch } from "react-icons/io5";
 import Sidebar from "./Sidebar";
+import { NavLink } from "react-router";
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
@@ -71,10 +72,17 @@ export const Header = () => {
         <Sidebar isMenuOpen={isMenuOpen} toggleMenu={toggleMenu} />
         {/* menu */}
         <div className="flex gap-2">
-          {menus.map((menu, index) => (
-            <a href={menu.route} className="text-white capitalize" key={index}>
+          {menus.map((menu) => (
+            <NavLink
+              to={menu.route}
+              end={menu.route === "/" || menu.route === "/tv"}
+              className={({ isActive }) =>
+                `capitalize ${isActive ? "text-red-400" : "text-white"}`
+              }
+              key={menu.route}
+            >
               {menu.title}
-            </a>
+            </NavLink>
           ))}
         </div>
         {/* profile */}

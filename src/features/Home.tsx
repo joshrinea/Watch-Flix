@@ -1,38 +1,51 @@
 import { Component } from "react";
 import type { Movie, UpcomingMoviesResponse } from "../types/movie";
+import type { TvShow } from "../types/media";
 import Slider from "../components/common/Slider/Slider";
 import Carousel from "../components/common/Carousel/Carousel";
+import {
+  fetchNowPlayingMovies,
+  fetchUpcomingMovies,
+} from "../services/movieService";
+import { fetchNewEpisodes } from "../services/tvService";
 
 interface HomeState {
   movies: Movie[];
+  nowPlaying: Movie[];
+  newEpisodes: TvShow[];
 }
 
 export class Home extends Component<{}, HomeState> {
   state: HomeState = {
     movies: [],
+    nowPlaying: [],
+    newEpisodes: [],
   };
-
-  API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
   async componentDidMount(): Promise<void> {
     try {
-      const response = await fetch(
-        `https://api.themoviedb.org/3/movie/upcoming?api_key=${this.API_KEY}`,
-      );
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch movies: ${response.status}`);
-      }
-
-      const data: UpcomingMoviesResponse = await response.json();
+      const data: UpcomingMoviesResponse = await fetchUpcomingMovies();
       this.setState({ movies: data.results });
     } catch (error) {
       console.error("Error fetching movies:", error);
     }
+
+    try {
+      const [nowPlaying, newEpisodes] = await Promise.all([
+        fetchNowPlayingMovies(),
+        fetchNewEpisodes(),
+      ]);
+      this.setState({
+        nowPlaying: nowPlaying.results,
+        newEpisodes: newEpisodes.results,
+      });
+    } catch (error) {
+      console.error("Error fetching home sections:", error);
+    }
   }
 
   render(): React.ReactNode {
-    const { movies } = this.state;
+    const { movies, nowPlaying, newEpisodes } = this.state;
 
     return (
       <div className="App">
@@ -44,6 +57,20 @@ export class Home extends Component<{}, HomeState> {
         <div className="mb-4">
           <h1 className="px-4 text-lg mb-2 sm:px-9 lg:px-12">Newly added</h1>
           <Slider movies={movies} />
+        </div>
+        <div className="mb-4">
+          <h1 className="px-4 text-lg mb-2 sm:px-9 lg:px-12">Now playing</h1>
+          <Slider movies={nowPlaying} imageType="backdrop" size="large" />
+        </div>
+        <div className="mb-4">
+          <h1 className="px-4 text-lg mb-2 sm:px-9 lg:px-12">New episodes</h1>
+          <Slider
+            movies={newEpisodes}
+            imageType="backdrop"
+            size="extra-large"
+            badge="NEW EPISODE"
+            showTitle
+          />
         </div>
       </div>
     );
